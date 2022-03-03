@@ -158,6 +158,8 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+      'user_nick' => 'username'
+    ],
 
 ];
