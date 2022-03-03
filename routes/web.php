@@ -5,7 +5,9 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\PostController;
+  use App\Http\Controllers\FollowController;
 use App\Models\Post;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,10 +39,11 @@ Route::middleware('auth')->group(function () {
 
   Route::resource('posts', PostController::class);
 
-  Route::get('{user_nick}', [PostController::class, 'list']);
+  Route::get('{user:user_nick}', [PostController::class, 'list']);
 
-  Route::post('follow/{post}', [PostController::class, 'follow']);
-  Route::delete('follow/{post}', [PostController::class, 'cancel']);
+  Route::get('follows', [FollowController::class, 'index']);
+  Route::post('follow/{post}', [FollowController::class, 'follow']);
+  Route::delete('follow/{post}', [FollowController::class, 'cancel']);
 
   Route::post('logout', [AuthController::class, 'destroy'])
     ->name('logout');
