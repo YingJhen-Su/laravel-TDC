@@ -50,7 +50,7 @@ class User extends Authenticatable
       return $this->hasMany(Social::class);
     }
 
-    public function follow_posts() {
+    public function follows() {
       return $this->belongsToMany(Post::class, 'follows')->withTimestamps();
     }
 }

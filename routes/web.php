@@ -5,7 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\PostController;
-  use App\Http\Controllers\FollowController;
+use App\Http\Controllers\FollowController;
 use App\Models\Post;
 use App\Models\User;
 

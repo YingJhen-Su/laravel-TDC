@@ -15,6 +15,9 @@ class Post extends Model
    * @var array<int, string>
    */
   protected $fillable = [
+    'title',
+    'content',
+    'user_id',
   ];
 
   /**
@@ -29,7 +32,7 @@ class Post extends Model
     return $this->belongsTo(User::class);
   }
 
-  public function follow_users() {
+  public function followers() {
     return $this->belongsToMany(User::class, 'follows')->withTimestamps();
   }
 }
