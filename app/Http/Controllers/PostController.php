@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePostRequest;
-use App\Http\Requests\UpdatePostRequest;
+use App\Http\Requests\PostRequest;
 use App\Models\Post;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -15,7 +16,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+//      $posts = Post::orderBy('created_at', 'desc')->paginate(5);
+//      return view('list', ['posts' => $posts]);
+      return view('welcome');
     }
 
     /**
@@ -25,18 +28,23 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+      return view('form');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StorePostRequest  $request
+     * @param  \App\Http\Requests\PostRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePostRequest $request)
+    public function store(PostRequest $request)
     {
-        //
+      $post = new Post();
+      $post->title = $request->input('title');
+      $post->content = $request->input('content');
+      $post->user_id = Auth::id();
+      $post->save();
+
     }
 
     /**
@@ -47,7 +55,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+      return view('post', ['post' => $post]);
     }
 
     /**
@@ -58,7 +66,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+      return view('form', ['post' => $post]);
     }
 
     /**
@@ -68,9 +76,10 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePostRequest $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
-        //
+      $validated = $request->validated();
+      $post->update($validated);
     }
 
     /**
@@ -81,39 +90,19 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+      $post->delete();
     }
 
     /**
      * Display a listing of the resource of the specified user.
      *
-     * @param  string  $user_nick
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function list($user_nick)
+    public function list(User $user)
     {
-      //
-    }
-
-    /**
-     * Store a follow relationship.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function follow(Post $post)
-    {
-      //
-    }
-
-    /**
-     * Cancel a follow relationship.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function cancel(Post $post)
-    {
-      //
+      $user = Auth::user();
+      $posts = $user->posts()->orderBy('created_at', 'desc')->paginate(5);
+      return view('list', ['posts' => $posts]);
     }
 }
