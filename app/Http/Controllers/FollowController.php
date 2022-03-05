@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
 
 class FollowController extends Controller
 {
@@ -13,7 +14,9 @@ class FollowController extends Controller
      */
     public function index()
     {
-      //
+      $user = Auth::user();
+      $follows = $user->follows()->with('user')->orderBy('created_at', 'desc')->paginate(5);
+      return view('list', ['post' => $follows]);
     }
 
   /**
@@ -24,7 +27,10 @@ class FollowController extends Controller
    */
   public function follow(Post $post)
   {
-    //
+    $user = Auth::user();
+    if (!$user->follows->contains($post)) {
+      $user->follows()->attach($post->id);
+    }
   }
 
   /**
@@ -35,6 +41,9 @@ class FollowController extends Controller
    */
   public function cancel(Post $post)
   {
-    //
+    $user = Auth::user();
+    if ($user->follows->contains($post)) {
+      $user->follows()->detach($post->id);
+    }
   }
 }
