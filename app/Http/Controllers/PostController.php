@@ -16,9 +16,9 @@ class PostController extends Controller
      */
     public function index()
     {
-//      $posts = Post::orderBy('created_at', 'desc')->paginate(5);
-//      return view('list', ['posts' => $posts]);
-      return view('welcome');
+      $posts = Post::orderBy('created_at', 'desc')->paginate(5);
+      return view('list', ['posts' => $posts]);
+//      return view('welcome');
     }
 
     /**
@@ -28,7 +28,8 @@ class PostController extends Controller
      */
     public function create()
     {
-      return view('form');
+      $posts = null;
+      return view('form', ['posts' => $posts]);
     }
 
     /**
@@ -45,6 +46,7 @@ class PostController extends Controller
       $post->user_id = Auth::id();
       $post->save();
 
+      return redirect('/posts/' . $post->id);
     }
 
     /**
@@ -66,20 +68,31 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+      $user = Auth::user();
+      if ($user->cannot('update', $post)) {
+        return back()->withErrors('msg', '無權限更新此篇文章');
+      }
+
       return view('form', ['post' => $post]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdatePostRequest  $request
+     * @param  \App\Http\Requests\PostRequest  $request
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
     public function update(PostRequest $request, Post $post)
     {
+      $user = Auth::user();
+      if ($user->cannot('update', $post)) {
+        return redirect('/posts/' . $post->id)->withErrors('msg', '無權限更新此篇文章');
+      }
+
       $validated = $request->validated();
       $post->update($validated);
+      return redirect('/posts/' . $post->id);
     }
 
     /**
@@ -90,6 +103,11 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+      $user = Auth::user();
+      if ($user->cannot('delete', $post)) {
+        return redirect('/posts/' . $post->id)->withErrors('msg', '無權限刪除此篇文章');
+      }
+
       $post->delete();
     }
 
