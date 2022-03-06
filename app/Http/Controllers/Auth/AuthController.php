@@ -30,6 +30,7 @@ class AuthController extends Controller
 
       return back()->withErrors([
         'user_nick' => 'The provided credentials do not match our records.',
+        'password'  => 'The provided credentials do not match our records.'
       ]);
 
 

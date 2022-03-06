@@ -31,6 +31,8 @@ class FollowController extends Controller
     if (!$user->follows->contains($post)) {
       $user->follows()->attach($post->id);
     }
+
+    return back();
   }
 
   /**
@@ -45,5 +47,7 @@ class FollowController extends Controller
     if ($user->follows->contains($post)) {
       $user->follows()->detach($post->id);
     }
+
+    return back();
   }
 }
