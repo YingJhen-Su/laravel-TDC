@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use App\Models\User;
+use App\Http\Requests\PostRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Providers\RouteServiceProvider;
 
 class PostController extends Controller
 {
@@ -16,7 +17,7 @@ class PostController extends Controller
      */
     public function index()
     {
-      $posts = Post::orderBy('created_at', 'desc')->paginate(5);
+      $posts = Post::orderBy('created_at', 'desc')->paginate(2);
       return view('list', ['posts' => $posts]);
 //      return view('welcome');
     }
@@ -40,9 +41,7 @@ class PostController extends Controller
      */
     public function store(PostRequest $request)
     {
-      $post = new Post();
-      $post->title = $request->input('title');
-      $post->content = $request->input('content');
+      $post = new Post($request->validated());
       $post->user_id = Auth::id();
       $post->save();
 
@@ -70,7 +69,7 @@ class PostController extends Controller
     {
       $user = Auth::user();
       if ($user->cannot('update', $post)) {
-        return back()->withErrors('msg', '無權限更新此篇文章');
+        return back()->withErrors(['msg' => '無權限更新此篇文章']);
       }
 
       return view('form', ['post' => $post]);
@@ -87,7 +86,7 @@ class PostController extends Controller
     {
       $user = Auth::user();
       if ($user->cannot('update', $post)) {
-        return redirect('/posts/' . $post->id)->withErrors('msg', '無權限更新此篇文章');
+        return redirect('/posts/' . $post->id)->withErrors(['msg' => '無權限更新此篇文章']);
       }
 
       $validated = $request->validated();
@@ -105,10 +104,11 @@ class PostController extends Controller
     {
       $user = Auth::user();
       if ($user->cannot('delete', $post)) {
-        return redirect('/posts/' . $post->id)->withErrors('msg', '無權限刪除此篇文章');
+        return redirect('/posts/' . $post->id)->withErrors(['msg' => '無權限刪除此篇文章']);
       }
 
       $post->delete();
+      return redirect(RouteServiceProvider::HOME);
     }
 
     /**
@@ -119,7 +119,6 @@ class PostController extends Controller
      */
     public function list(User $user)
     {
-      $user = Auth::user();
       $posts = $user->posts()->orderBy('created_at', 'desc')->paginate(5);
       return view('list', ['posts' => $posts]);
     }
