@@ -16,7 +16,7 @@ class FollowController extends Controller
     {
       $user = Auth::user();
       $follows = $user->follows()->with('user')->orderBy('created_at', 'desc')->paginate(5);
-      return view('list', ['post' => $follows]);
+      return view('list', ['posts' => $follows]);
     }
 
   /**
