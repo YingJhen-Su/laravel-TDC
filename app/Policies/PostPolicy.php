@@ -34,4 +34,28 @@ class PostPolicy
       return $user->id === $post->user_id;
 
     }
+
+  /**
+   * Determine whether the user can follow the model.
+   *
+   * @param  \App\Models\User  $user
+   * @param  \App\Models\Post  $post
+   * @return \Illuminate\Auth\Access\Response|bool
+   */
+  public function follow(User $user, Post $post)
+  {
+    return $user->id != $post->user_id && !$user->follows->contains($post);
+  }
+
+  /**
+   * Determine whether the user can cancel the follow.
+   *
+   * @param  \App\Models\User  $user
+   * @param  \App\Models\Post  $post
+   * @return \Illuminate\Auth\Access\Response|bool
+   */
+  public function cancel(User $user, Post $post)
+  {
+    return $user->id != $post->user_id && $user->follows->contains($post);
+  }
 }
