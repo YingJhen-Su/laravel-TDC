@@ -39,11 +39,11 @@ Route::middleware('auth')->group(function () {
 
   Route::resource('posts', PostController::class);
 
-  Route::get('{user:user_nick}', [PostController::class, 'list']);
-
   Route::get('follows', [FollowController::class, 'index']);
   Route::post('follow/{post}', [FollowController::class, 'follow']);
   Route::delete('follow/{post}', [FollowController::class, 'cancel']);
+
+  Route::get('{user:user_nick}', [PostController::class, 'list']);
 
   Route::post('logout', [AuthController::class, 'destroy'])
     ->name('logout');
