@@ -36,7 +36,6 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
   Route::get('/', [PostController::class, 'index']);
-
   Route::resource('posts', PostController::class);
 
   Route::get('follows', [FollowController::class, 'index']);
@@ -45,6 +44,5 @@ Route::middleware('auth')->group(function () {
 
   Route::get('{user:user_nick}', [PostController::class, 'list']);
 
-  Route::post('logout', [AuthController::class, 'destroy'])
-    ->name('logout');
+  Route::post('logout', [AuthController::class, 'destroy'])->name('logout');
 });
