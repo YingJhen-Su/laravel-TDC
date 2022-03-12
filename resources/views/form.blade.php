@@ -51,20 +51,23 @@
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
-                <h1>@empty($post)發表新文章 @else 文章編輯 @endempty</h1>
+                <h1>@empty($post)發表新文章 @else文章編輯 @endempty</h1>
                 <div class="my-5">
-                    <form id="contactForm" class="form" method="POST" action="/posts">
+                    <form id="contactForm" class="form" method="POST" action="@empty($post)/posts @else/posts/{{ $post->id }} @endempty">
                         @csrf
+                        @isset($post)
+                            @method('PUT')
+                        @endisset
                         <div class="form-group">
                             <label class="form-label" for="title">標題</label>
-                            <input type="text" class="form-control" id="title" name="title" value="@empty($post){{ old('title') }} @else {{ $post->title }} @endempty" placeholder="Enter your title..." required>
+                            <input type="text" class="form-control" id="title" name="title" value="@empty($post){{ old('title') }} @else{{ $post->title }} @endempty" placeholder="Enter your title..." required>
                             @error('title')
                             <span class="text-danger" role="alert">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="content">內容</label>
-                            <textarea rows="15" cols="50" name="content" class="form-control" id="content" placeholder="Enter your content here..." required>@empty($post){{ old('content') }} @else {{ $post->content }} @endempty</textarea>
+                            <textarea rows="15" cols="50" name="content" class="form-control" id="content" placeholder="Enter your content here..." required>@empty($post){{ old('content') }} @else{{ $post->content }} @endempty</textarea>
                             @error('content')
                             <span class="text-danger" role="alert">{{ $message }}</span>
                             @enderror
