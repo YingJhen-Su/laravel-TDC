@@ -20,7 +20,7 @@ class RegisterController extends Controller
     {
       $request->validate([
         'user_nick' => ['required', 'alpha_num', 'max:24', 'unique:users'],
-        'email'     => ['required', 'string', 'email', 'unique:users'],
+        'email'     => ['required', 'string', 'email'],
         'password'  => ['required', 'string']
       ]);
 
@@ -30,7 +30,7 @@ class RegisterController extends Controller
         'password'  => Hash::make($request->password)
       ]);
 
-      Auth::login($user);
+      Auth::login($user, true);
 
       return redirect(RouteServiceProvider::HOME);
     }
