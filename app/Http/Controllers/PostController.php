@@ -13,31 +13,29 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function index()
     {
-      $posts = Post::orderBy('created_at', 'desc')->paginate(2);
+      $posts = Post::orderBy('created_at', 'desc')->with('user')->paginate(5);
       return view('list', ['posts' => $posts]);
-//      return view('welcome');
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function create()
     {
-      $posts = null;
-      return view('form', ['posts' => $posts]);
+      return view('form');
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\PostRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function store(PostRequest $request)
     {
@@ -52,7 +50,7 @@ class PostController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function show(Post $post)
     {
@@ -63,13 +61,13 @@ class PostController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function edit(Post $post)
     {
       $user = Auth::user();
       if ($user->cannot('update', $post)) {
-        return back()->withErrors(['msg' => '無權限更新此篇文章']);
+        return back()->withErrors(['msg' => '無權限更新此篇文章!']);
       }
 
       return view('form', ['post' => $post]);
@@ -80,13 +78,13 @@ class PostController extends Controller
      *
      * @param  \App\Http\Requests\PostRequest  $request
      * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function update(PostRequest $request, Post $post)
     {
       $user = Auth::user();
       if ($user->cannot('update', $post)) {
-        return redirect('/posts/' . $post->id)->withErrors(['msg' => '無權限更新此篇文章']);
+        return redirect('/posts/' . $post->id)->withErrors(['msg' => '無權限更新此篇文章!']);
       }
 
       $validated = $request->validated();
@@ -98,13 +96,13 @@ class PostController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function destroy(Post $post)
     {
       $user = Auth::user();
       if ($user->cannot('delete', $post)) {
-        return redirect('/posts/' . $post->id)->withErrors(['msg' => '無權限刪除此篇文章']);
+        return redirect('/posts/' . $post->id)->withErrors(['msg' => '無權限刪除此篇文章!']);
       }
 
       $post->delete();
@@ -115,11 +113,11 @@ class PostController extends Controller
      * Display a listing of the resource of the specified user.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function list(User $user)
     {
-      $posts = $user->posts()->orderBy('created_at', 'desc')->paginate(5);
+      $posts = $user->posts()->with('user')->orderBy('created_at', 'desc')->paginate(5);
       return view('list', ['posts' => $posts]);
     }
 }

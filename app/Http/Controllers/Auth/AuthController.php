@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-
     public function create()
     {
       return view('auth.login');
@@ -32,8 +31,6 @@ class AuthController extends Controller
         'user_nick' => 'The provided credentials do not match our records.',
         'password'  => 'The provided credentials do not match our records.'
       ]);
-
-
     }
 
     public function destroy(Request $request)
