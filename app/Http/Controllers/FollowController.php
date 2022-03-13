@@ -10,7 +10,7 @@ class FollowController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
     public function index()
     {
@@ -23,12 +23,12 @@ class FollowController extends Controller
    * Store a follow relationship.
    *
    * @param  \App\Models\Post  $post
-   * @return \Illuminate\Http\Response
+   * @return \Illuminate\Http\RedirectResponse
    */
   public function follow(Post $post)
   {
     $user = Auth::user();
-    if (!$user->follows->contains($post)) {
+    if ($user->can('follow', $post)) {
       $user->follows()->attach($post->id);
     }
 
@@ -39,12 +39,12 @@ class FollowController extends Controller
    * Cancel a follow relationship.
    *
    * @param  \App\Models\Post  $post
-   * @return \Illuminate\Http\Response
+   * @return \Illuminate\Http\RedirectResponse
    */
   public function cancel(Post $post)
   {
     $user = Auth::user();
-    if ($user->follows->contains($post)) {
+    if ($user->can('cancel', $post)) {
       $user->follows()->detach($post->id);
     }
 
